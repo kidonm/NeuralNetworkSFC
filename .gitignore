@@ -4,6 +4,7 @@
 .mtj.tmp/
 */target/*
 *.swp
+*.swo
 
 # Package Files #
 *.jar
