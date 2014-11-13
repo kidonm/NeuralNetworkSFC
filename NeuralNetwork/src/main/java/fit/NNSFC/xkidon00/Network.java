@@ -7,24 +7,26 @@ import org.apache.commons.math3.linear.*;
 class NeuralNetwork {
     public static void main(String[] args) {
         NeuralNetwork net = new NeuralNetwork(Arrays.asList(784,15,10));
+        batchSize = 100;
 //        for ( List<List<Double>> weight : weights ) {
   ///          System.out.println(weight.get(0).size());
      //   }
        // System.exit(1);
         
 //        System.out.println(weights);
+//        
+        /*
         trainingData = new MnistWrapper("data/mnist_tr.dat").loadData();
         trainingLabels = new MnistWrapper("data/mnist_tr.lbl").loadLabels();
         validationData = new MnistWrapper("data/mnist_val.dat").loadData();
         validationLabels = new MnistWrapper("data/mnist_val.lbl").loadLabels();
-        batchSize = 100;
         //System.out.println(biases);
 	
         if (trainingData.size() != trainingLabels.size()) {
             System.out.println("#data is not equal to #labels");
             System.exit(1);
         }
-        StochasticGradientDescent();
+        StochasticGradientDescent();*/
     }
 
     private List<List<Double>> initBiases (List<Integer> networkShape) {
