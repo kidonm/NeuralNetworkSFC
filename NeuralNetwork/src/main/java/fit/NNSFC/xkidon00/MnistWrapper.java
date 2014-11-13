@@ -37,6 +37,7 @@ class MnistWrapper {
 
         byte[][] samples = new byte[60000][784] ;
         byte[] labels = new byte[60000];
+        int dataLength = 0;
 
         ByteBuffer trbuff = ByteBuffer.allocate(4).order(ByteOrder.BIG_ENDIAN);
         ByteBuffer lblbuff = ByteBuffer.allocate(4).order(ByteOrder.BIG_ENDIAN);
@@ -56,9 +57,11 @@ class MnistWrapper {
         trainingData.read(trbuff);
         trainingLabels.read(lblbuff);
 // data length check
-        if(trbuff.getInt(0) != 60000 && lblbuff.getInt(0) != 60000) {
-          System.out.println("data lenght does not match");
+        if(trbuff.getInt(0) != lblbuff.getInt(0)) {
+          System.out.println("data lenght does not match " + trbuff.getInt(0) + " vs " + lblbuff.getInt(0));
           System.exit(1);
+        } else {
+          dataLength = trbuff.getInt(0); 
         }
         trbuff.flip();
         lblbuff.flip();
@@ -82,7 +85,7 @@ class MnistWrapper {
         lblbuff.flip();
 
         int read;
-        for ( int i = 0; i < 60000; i++ ) {
+        for ( int i = 0; i < dataLength; i++ ) {
           read = trainingLabels.read(labelBuff);
           labelBuff.flip();
          // try {  

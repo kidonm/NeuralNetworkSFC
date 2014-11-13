@@ -9,9 +9,11 @@ import org.apache.commons.math3.linear.*;
 class NeuralNetwork {
     public static void main(String... args) {
         NeuralNetwork net = new NeuralNetwork(Arrays.asList(784,15,10));
-        System.out.println("reading input data");
         try {
+          System.out.println("reading training data");
           trainingData = new MnistWrapper(args[0], args[1]).loadData();
+          System.out.println("reading testing data");
+          testingData = new MnistWrapper(args[2], args[3]).loadData();
         } catch(IOException e) {
           System.out.println("cannot read input data");
         }
@@ -72,6 +74,7 @@ class NeuralNetwork {
     private static List<List<Double>> biases;
     private static List<List<List<Double>>> weights;
     private static InputData trainingData;
+    private static InputData testingData;
     private static List<List<Double>> validationData;
     private static List<Double> validationLabels;
     private static long seed;
