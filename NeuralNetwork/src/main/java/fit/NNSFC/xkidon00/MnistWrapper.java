@@ -1,14 +1,15 @@
 package fit.NNSFC.xkidon00;
+
+import fit.NNSFC.xkidon00.InputData;
+
 import java.util.*;
+import java.lang.*;
 import java.util.regex.*;
 import java.io.*;
-//import java.nio.file.Files;
 import java.nio.file.*;
 import java.nio.channels.*;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
-//import java.nio.file.Path;
-//import java.nio.file.Paths;
 import static java.nio.file.StandardOpenOption.*;
 
 class MnistWrapper {
@@ -26,7 +27,7 @@ class MnistWrapper {
         trainingLbl = lblFilename;
     }
 
-    public void loadData() throws IOException{
+    public InputData loadData() throws IOException{
 
         Path path = Paths.get(trainingDat);
         ReadableByteChannel trainingData = Files.newByteChannel(path, EnumSet.of(READ));
@@ -35,10 +36,12 @@ class MnistWrapper {
         ReadableByteChannel trainingLabels = Files.newByteChannel(path, EnumSet.of(READ));
 
         byte[][] samples = new byte[60000][784] ;
+        byte[] labels = new byte[60000];
 
         ByteBuffer trbuff = ByteBuffer.allocate(4).order(ByteOrder.BIG_ENDIAN);
         ByteBuffer lblbuff = ByteBuffer.allocate(4).order(ByteOrder.BIG_ENDIAN);
         ByteBuffer sampleBuff = ByteBuffer.allocate(1);
+        ByteBuffer labelBuff = ByteBuffer.allocate(1);
 
         trainingData.read(trbuff);
         trainingLabels.read(lblbuff);
@@ -78,15 +81,24 @@ class MnistWrapper {
         trbuff.flip();
         lblbuff.flip();
 
+        int read;
         for ( int i = 0; i < 60000; i++ ) {
+          read = trainingLabels.read(labelBuff);
+          labelBuff.flip();
+         // try {  
+            labels[i] = labelBuff.get();
+	 //   } catch(IndexOutOfBoundsException e) {
+	  //    System.out.println(i);
+           //   System.out.println(read);
+           // }
+
           for ( int j = 0; j < 784 /* 28x28 */; j++ ) {
             trainingData.read(sampleBuff);
-            samples[i][j] = sampleBuff.get(0);
             sampleBuff.flip();
+            samples[i][j] = sampleBuff.get();
           }
-          System.out.println(samples[i]);
-          System.exit(1);
         }
+        return new InputData(samples, labels);
     }
 
     private String trainingDat;
