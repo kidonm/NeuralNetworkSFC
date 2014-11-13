@@ -1,4 +1,8 @@
 NeuralNetworkSFC
 ================
 
-a demonstration use of BP neural network FIT BUT, SFC
+Classification of handwritten digits using backpropagation neural network.
+This is a project for FIT VUT, SFC.
+
+
+
