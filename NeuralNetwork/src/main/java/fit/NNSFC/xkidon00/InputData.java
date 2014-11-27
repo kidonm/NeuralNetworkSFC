@@ -9,7 +9,7 @@ import java.nio.ByteOrder;
 
 class InputData {
 
-  InputData(byte[][] s, byte[] l) {
+  InputData(int[][] s, int[] l) {
     samples = s;
     labels = l;   
   }
@@ -18,22 +18,22 @@ class InputData {
     return samples.length;
   }
   
-  public static byte[][] getSamples() {
+  public static int[][] getSamples() {
     return samples;
   }
 
-  public static byte[] getLabels() {
+  public static int[] getLabels() {
     return labels;
   }
 
-  public byte[] getSample(int index) {
+  public int[] getSample(int index) {
     return samples[index];
   }  
 
-  public byte getLabel(int index) {
+  public int getLabel(int index) {
     return labels[index];
   }
 
-  private static byte samples[][];
-  private static byte labels[];   
+  private static int  samples[][];
+  private static int labels[];   
 }

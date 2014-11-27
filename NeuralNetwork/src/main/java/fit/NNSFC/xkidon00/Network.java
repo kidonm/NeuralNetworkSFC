@@ -70,12 +70,14 @@ class NeuralNetwork {
       }
 
       for (int batch = 0; batch < InputData.sampleSize(); batch += batchSize) {
+        System.out.println("error : " + currentError);
         GD(Arrays.copyOfRange(InputData.getSamples(), batch, batch + batchSize),
-           Arrays.copyOfRange(InputData.getLabels(), batch, batch + batchSize));
+           Arrays.copyOfRange(InputData.getLabels(), batch, batch + batchSize), eta);
       }
+      
     }
 
-    public static void GD(byte[][] samples, byte[] labels ) {
+    public static void GD(int[][] samples, int[] labels , double eta) {
       double[][] potentials = Arrays.copyOf(biases, biases.length);
       double[][] activations = Arrays.copyOf(biases, biases.length);
 
@@ -94,6 +96,8 @@ class NeuralNetwork {
             } // for each weight
             potentials[layer][neuron] += biases[layer][neuron];
             activations[layer][neuron] = sigmoid(potentials[layer][neuron]);
+            //System.out.println(Arrays.toString(activations[layer]));// = sigmoid(potentials[layer][neuron]);
+            //System.exit(1);
           } // for each neuron
         } // for each layer 
      
@@ -103,24 +107,40 @@ class NeuralNetwork {
         deltab[biases.length -1 ] = hadamardProduct(costPrimeVec(activations[biases.length-1], labels[sampleNum])
           , sigmoidPrimeVec(potentials[biases.length - 1]));
 
-        System.out.println(Arrays.toString(deltab[biases.length -1]));
-        System.exit(0);
+        //System.out.println(Arrays.toString(deltab[biases.length -1]));
+        //System.exit(0);
 
         deltaw[weights.length -1] = hadamardProductNested(deltab[weights.length-1]
           , activations[activations.length-2]);
 
 
-        // hidden layers
-        
-       // for ( int llneuron = 0; llneuron < biases[biases.length - 1].length; llneuron++ ) {
-       //   deltaw[biases.length - 1][llneuron] = deltab[biases.length - 1][llneuron] * 
-       //     activations[biases.length - 1][0];
-       // }
+      // hidden layers
 
-       // for ( int layer = 0 ; layer < biases.length + 1 /* + input vector  */; layer++ ) {
-       //   deltab[biases.length -1 ] = costPrimeVec(activations[biases.length - 1], labels[sampleNum])
-       //     * sigmoidPrimeVec(potentials[biases.length - 1]);
-       // }
+         for ( int layer = 2; layer < biases.length; layer++ ) {
+           for ( int neuron = 0; neuron < biases[biases.length-layer].length; neuron++ ) {
+
+             double sp = sigmoidPrime(potentials[biases.length-layer][neuron]);
+             double deltaWeightSum = 0.0;
+
+             for ( int delta = 0; delta < deltab[biases.length-layer+1][neuron]; delta++ ) {
+                deltaWeightSum += deltaWeightSum + (deltab[biases.length-layer+1][delta] * weights[biases.length-layer+1][delta][neuron]);
+             }  
+
+             deltab[biases.length-2][neuron] = sp * deltaWeightSum;
+             deltaw[weights.length -1] = hadamardProductNested(deltab[weights.length-1]
+             , activations[activations.length-2]);
+           } // for each neuron
+         } // for each layer except the last
+
+      // update the network
+        for ( int layer = 0; layer < biases.length; layer++ ) {
+          for ( int neuron = 0; neuron < biases[layer].length; neuron++ ) {
+            biases[layer][neuron] = (-eta) * deltab[layer][neuron];
+            for ( int weight = 0; weight < weights[layer][neuron].length; weight ++ ) {
+              weights[layer][neuron][weight] = (-eta) * deltaw[layer][neuron][weight]; 
+            }
+          } 
+        }
         
       } // for each sample in batch
     }
@@ -141,11 +161,7 @@ class NeuralNetwork {
         */
     }    
 
-    private static Double sigmoid(Double innerPotential) {
-        return 1.0/1.0 + (Math.exp(- innerPotential));
-    }
-
-    private static double[] costPrimeVec(double[] activation, byte label) {
+    private static double[] costPrimeVec(double[] activation, int label) {
          double[] ret = new double[activation.length];
          double[] vecLabel = new double[10];
          Arrays.fill(vecLabel, 0.0);
@@ -157,10 +173,14 @@ class NeuralNetwork {
          return ret; 
     }
 
+    private static double sigmoidPrime(double potential) {
+         return sigmoid(potential)*(1.0-sigmoid(potential));
+    }
+
     private static double[] sigmoidPrimeVec(double[] potentials) {
       double[] ret = new double[potentials.length];
          for (int dim = 0; dim < potentials.length; dim++) {
-           ret[dim] = sigmoid(potentials[dim]);
+           ret[dim] = sigmoidPrime(potentials[dim]);
          }
          return ret; 
     }
@@ -194,6 +214,7 @@ class NeuralNetwork {
       return 1.0/(1.0 + Math.exp(-value));
     }
 
+    private static double currentError;
     private static double[][] biases;
     private static double[][][] weights;
     private static InputData trainingData;

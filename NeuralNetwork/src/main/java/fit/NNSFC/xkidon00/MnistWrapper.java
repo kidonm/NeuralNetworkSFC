@@ -35,8 +35,8 @@ class MnistWrapper {
         path = Paths.get(trainingLbl);
         ReadableByteChannel trainingLabels = Files.newByteChannel(path, EnumSet.of(READ));
 
-        byte[][] samples = new byte[60000][784] ;
-        byte[] labels = new byte[60000];
+        int[][] samples = new int[60000][784] ;
+        int[] labels = new int[60000];
         int dataLength = 0;
 
         ByteBuffer trbuff = ByteBuffer.allocate(4).order(ByteOrder.BIG_ENDIAN);
@@ -92,7 +92,7 @@ class MnistWrapper {
 
           for ( int j = 0; j < 784 /* 28x28 */; j++ ) {
             readS = trainingData.read(sampleBuff);
-            samples[i][j] = sampleBuff.get(0);
+            samples[i][j] = sampleBuff.get(0) & 0xff;
             sampleBuff.flip();
             if ( readS != 1) {
               System.out.println("cannot read samples" + j);
@@ -101,7 +101,7 @@ class MnistWrapper {
           }
          
           //System.out.println(Arrays.toString((int[])samples[i]));
-          System.exit(1);
+          //System.exit(1);
         }
         return new InputData(samples, labels);
     }
