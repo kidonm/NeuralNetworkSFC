@@ -46,17 +46,16 @@ class MnistWrapper {
 
         trainingData.read(trbuff);
         trainingLabels.read(lblbuff);
-// magic number check        
-        if(trbuff.getInt(0) != 2051 && lblbuff.getInt(0) != 2051) {
-          System.out.println("magic numbers do not match");
-          System.exit(1);
-        }
+
+        // magic number check        
+        trbuff.getInt(0) ;
+        lblbuff.getInt(0) ;
         trbuff.flip();
         lblbuff.flip();
 
         trainingData.read(trbuff);
         trainingLabels.read(lblbuff);
-// data length check
+        // data length check
         if(trbuff.getInt(0) != lblbuff.getInt(0)) {
           System.out.println("data lenght does not match " + trbuff.getInt(0) + " vs " + lblbuff.getInt(0));
           System.exit(1);
@@ -67,39 +66,42 @@ class MnistWrapper {
         lblbuff.flip();
 
         trainingData.read(trbuff);
-        trainingLabels.read(lblbuff);
-        if(trbuff.getInt(0) != 28 && lblbuff.getInt(0) != 28) {
+        if(trbuff.getInt(0) != 28) {
           System.out.println("rows do not match");
           System.exit(1);
         }
         trbuff.flip();
-        lblbuff.flip();
 
         trainingData.read(trbuff);
-        trainingLabels.read(lblbuff);
-        if(trbuff.getInt(0) != 28 && lblbuff.getInt(0) != 28) {
+        if(trbuff.getInt(0) != 28 ) {
           System.out.println("cols do not match");
           System.exit(1);
         }
         trbuff.flip();
-        lblbuff.flip();
 
-        int read;
+        int readL = 0;
+        int readS = 0;
         for ( int i = 0; i < dataLength; i++ ) {
-          read = trainingLabels.read(labelBuff);
+          readL = trainingLabels.read(labelBuff);
+          labels[i] = labelBuff.get(0);
           labelBuff.flip();
-         // try {  
-            labels[i] = labelBuff.get();
-	 //   } catch(IndexOutOfBoundsException e) {
-	  //    System.out.println(i);
-           //   System.out.println(read);
-           // }
+          if ( readL != 1) {
+            System.out.println("cannot read labels" + i);
+            System.exit(1);
+          }
 
           for ( int j = 0; j < 784 /* 28x28 */; j++ ) {
-            trainingData.read(sampleBuff);
+            readS = trainingData.read(sampleBuff);
+            samples[i][j] = sampleBuff.get(0);
             sampleBuff.flip();
-            samples[i][j] = sampleBuff.get();
+            if ( readS != 1) {
+              System.out.println("cannot read samples" + j);
+              System.exit(1);
+            }
           }
+         
+          //System.out.println(Arrays.toString((int[])samples[i]));
+          System.exit(1);
         }
         return new InputData(samples, labels);
     }

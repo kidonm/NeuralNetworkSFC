@@ -14,6 +14,18 @@ class InputData {
     labels = l;   
   }
 
+  public static int sampleSize() {
+    return samples.length;
+  }
+  
+  public static byte[][] getSamples() {
+    return samples;
+  }
+
+  public static byte[] getLabels() {
+    return labels;
+  }
+
   public byte[] getSample(int index) {
     return samples[index];
   }  
