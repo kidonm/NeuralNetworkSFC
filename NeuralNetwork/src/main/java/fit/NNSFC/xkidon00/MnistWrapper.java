@@ -92,7 +92,7 @@ class MnistWrapper {
 
           for ( int j = 0; j < 784 /* 28x28 */; j++ ) {
             readS = trainingData.read(sampleBuff);
-            samples[i][j] = sampleBuff.get(0) & 0xff;
+            samples[i][j] = (sampleBuff.get(0) & 0xff);
             sampleBuff.flip();
             if ( readS != 1) {
               System.out.println("cannot read samples" + j);

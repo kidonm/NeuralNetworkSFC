@@ -36,7 +36,7 @@ class NeuralNetwork {
         biases[layer] = new double[nnShape[layer + 1]];
         for ( int neuron = 0; neuron < nnShape[layer + 1]; neuron++ ) {
 
-          biases[layer][neuron] = rand.nextDouble();
+          biases[layer][neuron] = rand.nextGaussian();
            
         } // for each neuron     
       } // first layer is an input vector 
@@ -55,7 +55,7 @@ class NeuralNetwork {
           weights[layer][neuron] = new double[nnShape[layer]];
 
           for ( int weight = 0; weight < nnShape[layer]; weight++) {
-            weights[layer][neuron][weight] = rand.nextDouble();
+            weights[layer][neuron][weight] = rand.nextGaussian();
           }
         } // for each neuron     
       } // first layer is an input vector 
@@ -70,7 +70,7 @@ class NeuralNetwork {
       }
 
       for (int batch = 0; batch < InputData.sampleSize(); batch += batchSize) {
-        System.out.println("error : " + currentError);
+        //System.out.println("error : " + currentError);
         GD(Arrays.copyOfRange(InputData.getSamples(), batch, batch + batchSize),
            Arrays.copyOfRange(InputData.getLabels(), batch, batch + batchSize), eta);
       }
@@ -91,13 +91,17 @@ class NeuralNetwork {
             activations[layer][neuron] = 0;
             potentials[layer][neuron] = 0;
             for ( int weight = 0; weight < weights[layer][neuron].length; weight ++ ) {
-              potentials[layer][neuron] += potentials[layer][neuron] + 
-                weights[layer][neuron][weight] * samples[sampleNum][weight];
+              potentials[layer][neuron] += weights[layer][neuron][weight] * samples[sampleNum][weight];
+
+            //System.out.print(potentials[layer][neuron] + " "); 
             } // for each weight
+
+            System.out.print(potentials[layer][neuron] + " "); 
+            System.out.print(biases[layer][neuron] + " ");
             potentials[layer][neuron] += biases[layer][neuron];
+            System.out.println(potentials[layer][neuron]); 
             activations[layer][neuron] = sigmoid(potentials[layer][neuron]);
-            //System.out.println(Arrays.toString(activations[layer]));// = sigmoid(potentials[layer][neuron]);
-            //System.exit(1);
+
           } // for each neuron
         } // for each layer 
      
@@ -106,6 +110,11 @@ class NeuralNetwork {
         // last layer
         deltab[biases.length -1 ] = hadamardProduct(costPrimeVec(activations[biases.length-1], labels[sampleNum])
           , sigmoidPrimeVec(potentials[biases.length - 1]));
+
+        for( int tmp = 0; tmp < deltab[biases.length-1].length; tmp++ ) {
+          System.out.print(deltab[biases.length-1][tmp] + " ");
+        }
+        System.exit(1);
 
         //System.out.println(Arrays.toString(deltab[biases.length -1]));
         //System.exit(0);
