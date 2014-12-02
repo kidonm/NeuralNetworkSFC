@@ -98,15 +98,15 @@ class MnistWrapper {
           for ( int j = 0; j < 28 /* 28x28 */; j++ ) {
             for ( int k = 0; k < 28 ; k++ ) {
 		    readS = trainingData.read(sampleBuff);
-		    //samples[i][j * k] = (sampleBuff.get(0) & 0xff) / 255.0;
-                    System.out.print((((sampleBuff.get(0) & 0xff) == 0) ? 0 : " ") + " ");
+		    samples[i][j * k] = (sampleBuff.get(0) & 0xff) / 255.0;
+                    //System.out.print((((sampleBuff.get(0) & 0xff) == 0) ? 0 : " ") + " ");
 		    sampleBuff.flip();
 		    if ( readS != 1) {
 		      System.out.print("cannot read samples " + j);
 		      System.exit(1);
 		    }
             }
-            System.out.println();
+            //System.out.println();
           }
           //System.out.println(Arrays.toString((int[])samples[i]));
           //System.exit(1);

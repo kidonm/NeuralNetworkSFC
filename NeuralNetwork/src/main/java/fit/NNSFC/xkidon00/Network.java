@@ -4,13 +4,12 @@ import java.lang.*;
 import java.io.*;
 import fit.NNSFC.xkidon00.MnistWrapper;
 import fit.NNSFC.xkidon00.InputData;
-import org.apache.commons.math3.linear.*;
 
 class NeuralNetwork {
     public static void main(String... args) {
         
         System.out.println("initializing network");
-        int[] nnShape = {784, 40, 10};
+        int[] nnShape = {784, 30, 10};
 
         NeuralNetwork net = new NeuralNetwork(nnShape);
         try {
@@ -31,7 +30,7 @@ class NeuralNetwork {
 
         //trainingData = new InputData(tr, lb);
 
-      net.StochasticGD(4.0, 30);        
+      net.StochasticGD(3.0, 60);        
     }
 
     private void initBiases () {
