@@ -3,6 +3,8 @@ package fit.NNSFC.xkidon00;
 import fit.NNSFC.xkidon00.InputData;
 
 import java.util.*;
+import java.awt.image.*;
+import java.awt.*;
 import java.lang.*;
 import java.util.regex.*;
 import java.io.*;
@@ -10,6 +12,7 @@ import java.nio.file.*;
 import java.nio.channels.*;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
+import javax.imageio.ImageIO;
 import static java.nio.file.StandardOpenOption.*;
 
 class MnistWrapper {
@@ -35,8 +38,6 @@ class MnistWrapper {
         path = Paths.get(trainingLbl);
         ReadableByteChannel trainingLabels = Files.newByteChannel(path, EnumSet.of(READ));
 
-        int[][] samples = new int[60000][784] ;
-        int[] labels = new int[60000];
         int dataLength = 0;
 
         ByteBuffer trbuff = ByteBuffer.allocate(4).order(ByteOrder.BIG_ENDIAN);
@@ -62,6 +63,10 @@ class MnistWrapper {
         } else {
           dataLength = trbuff.getInt(0); 
         }
+
+        double[][] samples = new double[dataLength][784] ;
+        int[] labels = new int[dataLength];
+
         trbuff.flip();
         lblbuff.flip();
 
@@ -90,16 +95,19 @@ class MnistWrapper {
             System.exit(1);
           }
 
-          for ( int j = 0; j < 784 /* 28x28 */; j++ ) {
-            readS = trainingData.read(sampleBuff);
-            samples[i][j] = (sampleBuff.get(0) & 0xff);
-            sampleBuff.flip();
-            if ( readS != 1) {
-              System.out.println("cannot read samples" + j);
-              System.exit(1);
+          for ( int j = 0; j < 28 /* 28x28 */; j++ ) {
+            for ( int k = 0; k < 28 ; k++ ) {
+		    readS = trainingData.read(sampleBuff);
+		    //samples[i][j * k] = (sampleBuff.get(0) & 0xff) / 255.0;
+                    System.out.print((((sampleBuff.get(0) & 0xff) == 0) ? 0 : " ") + " ");
+		    sampleBuff.flip();
+		    if ( readS != 1) {
+		      System.out.print("cannot read samples " + j);
+		      System.exit(1);
+		    }
             }
+            System.out.println();
           }
-         
           //System.out.println(Arrays.toString((int[])samples[i]));
           //System.exit(1);
         }
